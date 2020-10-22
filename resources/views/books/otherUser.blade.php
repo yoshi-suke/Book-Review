@@ -1,0 +1,73 @@
+@extends('layouts.app')
+
+@section('title', 'Other Users Books Index')
+
+@section('sidebar')
+  @@parent
+  <p>本一覧</p>
+@endsection
+
+@section('content')
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3>{{ $user->name }}さんの本一覧</h3>
+            <!-- <a class="btn btn-primary mb-1" href="/books/create" role="button">新規追加</a> -->
+            <a class="btn btn-secondary mb-1" href="/books/users" role="button">他の利用者一覧</a>
+            <!-- <a class="test btn btn-warning" href="#" role="button" id="test">test</a> -->
+            <!-- <ul class="list-unstyled"> -->
+              @foreach($items as $item)
+                <div class="media border border-secondary rounded bg-white py-4 mb-1">
+                  <img src="" class="mr-3" alt="">
+                  <div class="media-body">
+                    <!-- イメージも入れる？？ -->
+                    <h5 class="mt-0 mb-1">{{ $item->name }}</h5>
+                    <p class="mt-0 mb-1">{{ $item->author }}</p>
+                    <p class="mt-0 mb-1">スコア：{{ $item->score }}</p>
+                    <p class="mt-0 mb-1">{{ $item->comment }}</p>
+
+                    <a class="btn btn-secondary" href="{{ action('BooksController@showOtherUsers', $item->id)}}" role="button">この本を読んだ利用者</a>
+                    <!-- <a class="btn btn-secondary" href="{{ action('BooksController@edit', $item->id)}}" role="button">情報を更新</a>
+                    <a class="del btn btn-warning" href="#" role="button" data-id="{{ $item->id }}">削除</a> -->
+
+                    <!-- <form method="post" action="{{ action('BooksController@destroy', $item->id)}}" id="form_{{ $item->id }}">
+                      {{ csrf_field() }}
+                      {{ method_field('delete') }}
+                    </form> -->
+                  </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+
+<!--
+<h3>{{ $user->name }}さんの本一覧</h3>
+  @foreach($items as $item)
+    <p>{{ $item->isbn }}</p>
+    <p>{{ $item->name }}</p>
+    <p>{{ $item->author }}</p>
+    <p>{{ $item->score }}</p>
+    <p>{{ $item->comment }}</p>
+    <p>ユーザID:{{ $item->user_id}}</p>
+    <a href ="{{ action('BooksController@edit', $item->id)}}">情報を更新</a>
+
+    <hr>
+  @endforeach
+
+  <a class="dropdown-item" href="{{ route('logout') }}"
+     onclick="event.preventDefault();
+                   document.getElementById('logout-form').submit();">
+      {{ __('Logout') }}
+  </a>
+
+  <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+      @csrf
+  </form>
+  <h3>利用者一覧</h3>
+  @foreach($users as $user)
+  <a href="{{ action('BooksController@showOtherUserBooks', $user->id)}}">
+    <p>{{ $user->name }}</p>
+  </a>
+  @endforeach -->
+@endsection
