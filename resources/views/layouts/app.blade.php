@@ -18,6 +18,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/add.css') }}" rel="stylesheet">
 </head>
 <body>
     <div id="app">
@@ -76,6 +77,5 @@
             @yield('content')
         </main>
     </div>
-    <script src="{{ asset('/js/isbn.js') }}"></script>
 </body>
 </html>

@@ -2,11 +2,6 @@
 
 @section('title', 'User Index')
 
-<!-- @section('sidebar')
-  @@parent
-  <p>ユーザー一覧</p>
-@endsection -->
-
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -19,7 +14,6 @@
                     <img src="" class="mr-3" alt="">
                     <div class="media-body">
                       <h5 class="mt-0 mb-1">{{ $user->name }}さん</h5>
-                      <!-- <p class="mt-0 mb-1">{{ $user->name }}</p> -->
                     </div>
                   </div>
                 </a>

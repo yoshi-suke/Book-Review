@@ -1,12 +1,5 @@
 <?php
 
-//ToDo
-//入力値のバリデーション
-//GoogleBooksから画像も取得
-//タイトルの一部から検索
-
-
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -22,13 +15,10 @@ class BooksController extends Controller
       if (Auth::check()) {
         $loginUser = $request->user();
         $items = User::find($loginUser->id)->books()->get();
-        // var_dump($items);
-        // die;
-        // $users = DB::table('users')->get();
+
         return view('books.index', [
           'loginUser' => $loginUser,
           'items' => $items,
-          // 'users' => $users,
         ]);
       } else {
         //ログインしていなかったらLogin画面表示
@@ -41,31 +31,55 @@ class BooksController extends Controller
     }
 
     public function getBookInfo(Request $request) {
-      $baseUrl = 'https://www.googleapis.com/books/v1/volumes?q=isbn:';
-      if (!empty($request->isbn)) {
-        $isbn = $request->isbn;
-        $requestUrl = $baseUrl . $isbn;
+        $baseUrl = 'https://www.googleapis.com/books/v1/volumes?q=intitle:';
+       if (!empty($request->name)) {
+        $name = $request->name;
+        $requestUrl = $baseUrl . $name;
         $json = file_get_contents($requestUrl);
         $data = json_decode($json);
-        $book = $data->items[0];
+        $books = $data->items;
 
-        $bookTitle = $book->volumeInfo->title;
-        $bookAuthors = $book->volumeInfo->authors;
+        foreach ($books as $book) {
+            $bookTitle[] = $book->volumeInfo->title;
+            // 著者がいないパターン
+            if (isset($book->volumeInfo->authors)) {
+              //著者が複数いる場合は各要素を結合する
+              $bookAuthors[] =  implode(',', $book->volumeInfo->authors);
+            } else {
+              $bookAuthors[] =  null;
+            }
 
+            // 13桁のISBNがあればそれを設定、なければ10桁を設定、それもなければ'null'を設定
+            if (isset($book->volumeInfo->industryIdentifiers)) {
+              for ($i = 0; $i < count($book->volumeInfo->industryIdentifiers); $i++) {
+                if ($book->volumeInfo->industryIdentifiers[$i]->type === "ISBN_13") {
+                    $bookIsbn[] = $book->volumeInfo->industryIdentifiers[$i]->identifier;
+                } elseif($book->volumeInfo->industryIdentifiers[$i]->type === "ISBN_10") {
+                    $bookIsbn[] = $book->volumeInfo->industryIdentifiers[$i]->identifier;
+                } else {
+                    $bookIsbn[] = null;
+                }
+              }
+            } else {
+              $bookIsbn[] = null;
+            }
+        }
+
+        $resultNumber = count($bookTitle);
         $response = [];
-        $response['bookTitle'] = $bookTitle;
-        $response['bookAuthors'] = implode(', ', $bookAuthors);
-        $jsonResponse = json_encode($response);
+        for ( $i = 0; $i < $resultNumber; $i++) {
+          $responses[$i]['bookTitle'] = $bookTitle[$i];
+          $responses[$i]['bookAuthors'] = $bookAuthors[$i];
+          $responses[$i]['bookIsbn'] = $bookIsbn[$i];
+        }
+        $jsonResponse = json_encode($responses);
       }
-      //単にリターンでOK
       return $jsonResponse;
     }
 
     public function store (Request $request) {
       $book = new Book;
       $form = $request->all();
-      // var_dump($form);
-      // die;
       unset($form['_token']);
       $book->user_id = $request->user()->id;
       $book->fill($form)->save();
@@ -78,13 +92,8 @@ class BooksController extends Controller
 
     public function update (Request $request, Book $book) {
       $form = $request->all();
-      // var_dump($form);
-      // die;
       unset($form['_token']);
       $book->fill($form)->save();
-      // var_dump($request->user()->id);
-      // var_dump($book->user_id);
-      // die;
       return redirect('/books');
     }
 
@@ -97,51 +106,20 @@ class BooksController extends Controller
       $users = DB::table('users')
         ->where('id', '<>', $request->user()->id)
         ->get();
-        // var_dump($users);
-
       return view('books.users', ['users' => $users]);
     }
 
     public function showOtherUsers(Book $book) {
-      //ここでエラーがでる
-      //$book->idのgetなら表示できる
-      //$book->idと同じisbnを持つ本を探してそこからuserを探す？？
-      //コレクションからはリレーションのメソッドは使えない
-      //DB::とBook::の使い分けがよくわからん！！
-      //DB::->stdClass
-      //Book::->object(Illuminate\Database\Eloquent\Collection)
-      // $users = Book::all();
-      // $users = Book::where('isbn', "9784297102111")->first();
       $bookNumber = Book::where('isbn', $book->isbn)->count();
       $users = [];
       for($i = 0; $i < $bookNumber; $i++) {
         $users[] = Book::where('isbn', $book->isbn)->skip($i)->first()->user;
       }
-
-      // $users = User::all()->user;
-      // $books = DB::table('books')->where('isbn', $book->isbn)->first();
-      // $books = Book::where('isbn', $book->isbn)->all()->user()->get();
-      // $users = Book::where('isbn', $book->isbn)->first()->user()->get();
-      // $user = $books->user()->get();
-      // foreach($books as $book) {
-        // $user = $book->user();
-      // }
-      // $users = $book->user()->get();
-        // ->user()->get();
-      // $books = DB::table('books')->where('isbn', $book->isbn)->get();
-
-      // 9784297102111
-
-      // $users = Book::find($book->id)->user()->get();
-      // var_dump($bookNumber);
-      // dd($users);
-      // var_dump($users);
       return view('books.users', ['users' => $users]);
 
     }
 
     public function showOtherUserBooks(User $user) {
-      // $items = User::find($user->id)->books()->get();
       $items = User::find($user->id)->books;
       $users = DB::table('users')->get();
       return view('books.otherUser', [
