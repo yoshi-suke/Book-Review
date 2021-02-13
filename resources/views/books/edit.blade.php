@@ -18,20 +18,7 @@
                     <form action="{{ url('/books', $book->id)}}" method="post">
                         @method('patch')
                         @csrf
-                        <div class="form-group row">
-                            <input type="hidden" name="id" value="{{ $book->id}}">
-                            <label for="isbn" class="col-md-4 col-form-label text-md-right">{{ __('ISBN') }}</label>
 
-                            <div class="col-md-6">
-                                <input id="isbn" type="number" class="form-control @error('isbn') is-invalid @enderror" name="isbn" value="{{ $book->isbn}}" required  readonly>
-
-                                @error('isbn')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
 
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('書名') }}</label>
@@ -54,6 +41,21 @@
                                 <input id="author" type="text" class="form-control @error('author') is-invalid @enderror" name="author" value="{{ $book->author}}" readonly>
 
                                 @error('author')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <input type="hidden" name="id" value="{{ $book->id}}">
+                            <label for="isbn" class="col-md-4 col-form-label text-md-right">{{ __('ISBN') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="isbn" type="number" class="form-control @error('isbn') is-invalid @enderror" name="isbn" value="{{ $book->isbn}}" required  readonly>
+
+                                @error('isbn')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

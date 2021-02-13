@@ -12,7 +12,4 @@ class Book extends Model
       return $this->belongsTo('App\User');
     }
 
-    // public function getRouteKeyName() {
-    //   return 'isbn';
-    // }
 }

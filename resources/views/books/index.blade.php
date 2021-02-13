@@ -14,13 +14,11 @@
             <h3>{{ $loginUser->name }}さんのページ</h3>
             <a class="btn btn-primary mb-1" href="/books/create" role="button">新規追加</a>
             <a class="btn btn-secondary mb-1" href="/books/users" role="button">他の利用者一覧</a>
-            <!-- <a class="test btn btn-warning" href="#" role="button" id="test">test</a> -->
-            <!-- <ul class="list-unstyled"> -->
               @foreach($items as $item)
                 <div class="media border border-secondary rounded bg-white py-4 mb-1">
                   <img src="" class="mr-3" alt="">
-                  <div class="media-body">
-                    <!-- イメージも入れる？？ -->
+                  <div class="media-body mr-1">
+                    <!-- サムネも入れる予定 -->
                     <h5 class="mt-0 mb-1">{{ $item->name }}</h5>
                     <p class="mt-0 mb-1">{{ $item->author }}</p>
                     <p class="mt-0 mb-1">スコア：{{ $item->score }}</p>
@@ -41,23 +39,4 @@
     </div>
 </div>
 <script src="/js/main.js"></script>
-
-<!-- </ul> -->
-
-
-
-
-
-
-  <!-- ログアウト処理（lauouts/app.blade.phpから持ってきた） -->
-  <!-- <a class="dropdown-item" href="{{ route('logout') }}"
-     onclick="event.preventDefault();
-                   document.getElementById('logout-form').submit();">
-      {{ __('Logout') }}
-  </a>
-
-  <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-      @csrf
-  </form> -->
-
 @endsection
