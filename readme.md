@@ -19,6 +19,7 @@
 - JavaScript
 - MySQL
 - 外部APIとしてGoogleBooksAPIを使用
+- Heroku
 
 ## 作成者
 
